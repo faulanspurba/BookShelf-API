@@ -33,11 +33,6 @@ const routes = [
     path: '/books/{bookId}',
     handler: deleteBook,
   },
-  {
-    method: 'DELETE',
-    path: '/books',
-    handler: deleteAll,
-  },
 ];
 
 export default routes;

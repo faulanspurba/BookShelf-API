@@ -81,14 +81,6 @@ const addingBooks = (req, h) => {
 };
 
 const getAllBooks = (req, h) => {
-  const booksData = books.map((book) => {
-    return {
-      id: book.id,
-      name: book.name,
-      publisher: book.publisher,
-    };
-  });
-
   let { reading, finished } = req.query;
 
   if (reading) {
@@ -122,6 +114,36 @@ const getAllBooks = (req, h) => {
       })
       .code(200);
   }
+
+  let { name } = req.query;
+
+  if (name) {
+    name = name.toLowerCase();
+
+    const filteredBook = books.filter((book) =>
+      book.name.toLowerCase().includes(name)
+    );
+
+    const result = filteredBook.map((book) => {
+      return { id: book.id, name: book.name, publisher: book.publisher };
+    });
+
+    return h
+      .response({
+        status: 'success',
+        data: { books: result },
+      })
+      .code(200);
+  }
+
+  //  Only get All Data
+  const booksData = books.map((book) => {
+    return {
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    };
+  });
 
   return h
     .response({
