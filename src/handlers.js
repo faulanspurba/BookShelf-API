@@ -87,6 +87,7 @@ const getAllBooks = (req, h) => {
 
   if (reading) {
     const filteredByReadings = books.filter((book) => book.reading == reading);
+
     const result = filteredByReadings.map((book) => ({
       id: book.id,
       name: book.name,
