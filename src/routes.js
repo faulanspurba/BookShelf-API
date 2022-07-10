@@ -1,6 +1,7 @@
+/* eslint-disable import/extensions */
+
 import {
   addingBooks,
-  deleteAll,
   deleteBook,
   getAllBooks,
   getBookById,

@@ -1,5 +1,7 @@
-import books from './books.js';
+/* eslint-disable import/extensions */
+/* eslint-disable no-multi-assign */
 import { nanoid } from 'nanoid';
+import books from './books.js';
 
 const addingBooks = (req, h) => {
   const id = nanoid(16);
@@ -36,7 +38,7 @@ const addingBooks = (req, h) => {
       .code(400);
   }
   let finished = false;
-  if (readPage == pageCount) finished = true;
+  if (readPage === pageCount) finished = true;
 
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
@@ -60,7 +62,7 @@ const addingBooks = (req, h) => {
 
   // Checking is success
 
-  const isSuccess = books.filter((book) => book.id === id).length > 0;
+  const isSuccess = books.filter((bk) => bk.id === id).length > 0;
 
   if (!isSuccess) {
     return h
@@ -81,13 +83,15 @@ const addingBooks = (req, h) => {
 };
 
 const getAllBooks = (req, h) => {
-  let { reading, finished } = req.query;
+  const { reading, finished } = req.query;
 
   if (reading) {
-    const filteredByReadings = books.filter((book) => book.reading == reading);
-    const result = filteredByReadings.map((book) => {
-      return { id: book.id, name: book.name, publisher: book.publisher };
-    });
+    const filteredByReadings = books.filter((book) => book.reading === reading);
+    const result = filteredByReadings.map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
     return h
       .response({
         status: 'success',
@@ -100,11 +104,13 @@ const getAllBooks = (req, h) => {
 
   if (finished) {
     const filteredByFinished = books.filter(
-      (book) => book.finished == finished
+      (book) => book.finished === finished
     );
-    const result = filteredByFinished.map((book) => {
-      return { id: book.id, name: book.name, publisher: book.publisher };
-    });
+    const result = filteredByFinished.map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
     return h
       .response({
         status: 'success',
@@ -124,9 +130,11 @@ const getAllBooks = (req, h) => {
       book.name.toLowerCase().includes(name)
     );
 
-    const result = filteredBook.map((book) => {
-      return { id: book.id, name: book.name, publisher: book.publisher };
-    });
+    const result = filteredBook.map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
 
     return h
       .response({
@@ -137,13 +145,11 @@ const getAllBooks = (req, h) => {
   }
 
   //  Only get All Data
-  const booksData = books.map((book) => {
-    return {
-      id: book.id,
-      name: book.name,
-      publisher: book.publisher,
-    };
-  });
+  const booksData = books.map((book) => ({
+    id: book.id,
+    name: book.name,
+    publisher: book.publisher,
+  }));
 
   return h
     .response({
@@ -158,7 +164,7 @@ const getAllBooks = (req, h) => {
 const getBookById = (req, h) => {
   const { bookId } = req.params;
 
-  const book = books.filter((book) => book.id === bookId)[0];
+  const book = books.filter((bk) => bk.id === bookId)[0];
 
   if (book === undefined) {
     return h
@@ -184,13 +190,14 @@ const updateBook = (req, h) => {
 
   const index = books.findIndex((book) => book.id === bookId);
 
-  if (index === -1)
+  if (index === -1) {
     return h
       .response({
         status: 'fail',
         message: 'Gagal memperbarui buku. Id tidak ditemukan',
       })
       .code(404);
+  }
 
   const {
     name,
@@ -204,16 +211,17 @@ const updateBook = (req, h) => {
   } = req.payload;
 
   //   Checking if name is not empty
-  if (!name)
+  if (!name) {
     return h
       .response({
         status: 'fail',
         message: 'Gagal memperbarui buku. Mohon isi nama buku',
       })
       .code(400);
+  }
 
   //   Checking if readPage isn't bigger than pageCount
-  if (readPage > pageCount)
+  if (readPage > pageCount) {
     return h
       .response({
         status: 'fail',
@@ -221,6 +229,7 @@ const updateBook = (req, h) => {
           'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
       })
       .code(400);
+  }
 
   const book = (books[index] = {
     ...books[index],
@@ -235,6 +244,8 @@ const updateBook = (req, h) => {
     updateAt: new Date().toISOString,
   });
 
+  books[index] = book;
+
   return h
     .response({
       status: 'success',
@@ -248,13 +259,14 @@ const deleteBook = (req, h) => {
 
   const index = books.findIndex((book) => book.id === bookId);
 
-  if (index === -1)
+  if (index === -1) {
     return h
       .response({
         status: 'fail',
         message: 'Buku gagal dihapus. Id tidak ditemukan',
       })
       .code(404);
+  }
 
   books.splice(index, 1);
 
@@ -266,16 +278,4 @@ const deleteBook = (req, h) => {
     .code(200);
 };
 
-const deleteAll = (req, h) => {
-  books.splice(0, books.length);
-  return h.response({ message: 'Deleting all books success' }).code(200);
-};
-
-export {
-  addingBooks,
-  getAllBooks,
-  getBookById,
-  updateBook,
-  deleteBook,
-  deleteAll,
-};
+export { addingBooks, getAllBooks, getBookById, updateBook, deleteBook };
